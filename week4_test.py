@@ -1,4 +1,4 @@
-import os, telebot, requests, psycopg2, source_html
+import os,io, telebot, requests, psycopg2, source_html
 from datetime import date
 
 
@@ -26,14 +26,9 @@ def create_file(message):
                                                "temp": row[6]}, "geometry": {"type": "Point",
                                                                            "coordinates": [row[4], row[5], 1.0]}})
     modified = source_html.html_2 % (message.from_user.id, str(source))
-    with open(f'{message.from_user.id}.html', 'w') as outfile:
-        outfile.write(source_html.html_1 + modified + source_html.html_3)
-    with open(f'{message.from_user.id}.html', 'rb') as infile:
-        bot.send_document(message.chat.id, infile)
-    os.remove(f'{message.from_user.id}.html')
-    # html_str = source_html.html_1 + modified + source_html.html_3
-    # output = str.encode(html_str, 'utf-8')
-    # bot.send_document(message.chat.id, output)
+    output = io.BytesIO(str.encode(source_html.html_1 + modified + source_html.html_3, 'utf-8'))
+    output.name = f'{message.from_user.first_name}.html'
+    return output
 
 def api_process(t_message):
     def end(value):
@@ -207,7 +202,7 @@ while attempt <= 3:
                            '/start для возвращения в начало программы (все данные будут стерты).'
                     bot.send_message(message.chat.id, ans1)
                     save_state(message.from_user.id, MAIN_STATE)
-                    create_file(message)
+                    bot.send_document(message.chat.id, create_file(message))
                 elif message.text.lower() == 'нет':
                     ans2 = 'Нажмите/Наберите "Да" для повторного ввода данных, "Стат." для вывода статистики, ' \
                            '/start для возвращения в начало программы (все данные будут стерты).'
