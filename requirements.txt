@@ -1,0 +1,5 @@
+pyTelegramBotAPI
+requests
+requests-toolbelt
+psycopg2
+
