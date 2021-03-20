@@ -2,7 +2,7 @@ import os, telebot, requests, psycopg2, source_html
 from datetime import date
 
 
-token = os.environ['TOKEN']
+token = os.environ['TEL_TOKEN']
 bot = telebot.TeleBot(token)
 
 connection, cursor = '',''
