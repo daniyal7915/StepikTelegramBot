@@ -25,7 +25,7 @@ def create_file(message):
             {"type": "Feature", "properties": {"ID": row[0], "city": row[2], "date": row[3],
                                                "temp": row[6]}, "geometry": {"type": "Point",
                                                                            "coordinates": [row[4], row[5], 1.0]}})
-    modified = source_html.html_2 % (message.from_user.id, str(source))
+    modified = source_html.html_2 % (message.from_user.first_name, str(source))
     output = io.BytesIO(str.encode(source_html.html_1 + modified + source_html.html_3, 'utf-8'))
     output.name = f'{message.from_user.first_name}.html'
     return output

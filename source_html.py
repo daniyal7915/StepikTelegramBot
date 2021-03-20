@@ -7,7 +7,7 @@ html_1 = '''<!doctype html>
     <style>
         body{background-color: #3d85c6;}
         .mapid {
-            height: 500px;
+            height: 50vh;
             width: 100%;
             margin: auto;
         }
@@ -17,7 +17,8 @@ html_1 = '''<!doctype html>
             color: white;
         }
         #main{
-            width: 900px;
+            width: 85%;
+            height: 100%;
             margin: auto;
         }
         #descr{
@@ -25,14 +26,18 @@ html_1 = '''<!doctype html>
             padding: 5px;
             color: white;
             text-align: center;
-            height:35px;
+            height: 17px;
         }
+        #text{
+            float: left;            
+        }    
         #myposition{
             font-style: oblique;
+            float: left;                        
         }
-        #plantPic{
-            width: 100%;
-        }
+        #center{
+            width: 300px;
+            margin: auto;
     </style>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
             integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
@@ -42,13 +47,15 @@ html_2 = f''' <title>Telegram bot</title>
     <body>
      <div id="main">
          <div id="title">
-             <h2>Telegram bot user #%d data visualization (click a city for the popup)</h2>
+             <h2>%s, click a city for the popup</h2>
          </div>
         <div id="mapid" class="mapid"></div>
         <br>
         <div id="descr">
-                <div id="text">Longitude, Latitude:</div>
+            <div id="center">
+                <div id="text">Longitude, Latitude</div>
                 <div id="myposition"></div>
+            </div>    
         </div>
     </div>
     <script>
@@ -67,7 +74,7 @@ html_3 = '''
         map.on('mousemove', function(e){
             // console.log(e)
             let el =document.querySelector("#myposition")
-            el.innerHTML = e.latlng.lng.toFixed(4) + ',  '+ e.latlng.lat.toFixed(4)
+            el.innerHTML = ':  ' + e.latlng.lng.toFixed(4) + ',  '+ e.latlng.lat.toFixed(4)
         })
         var CartoDB_Positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; ' +
@@ -82,7 +89,7 @@ html_3 = '''
         var Places = L.geoJSON(Source,{
             pointToLayer: function (feature, latlng) {
                 return L.marker(latlng, {icon: L.icon({
-                        iconUrl: 'https://freepngimg.com/thumb/star/16-star-png-image.png',
+                        iconUrl: 'https://freepngimg.com/thumb/star/12-red-star-png-image.png',
                         iconSize: [20, 20],
                         iconAnchor: [10, 10],
                         popupAnchor: [0, -10]
