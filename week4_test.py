@@ -109,7 +109,7 @@ while attempt <= 3:
     attempt += 1
     try:
         connection = psycopg2.connect(database=os.environ['DB'], user=os.environ['DB_USER'],
-                                      password=os.environ['DB_PASSWORD'], host='localhost', port='5432')
+                                      password=os.environ['DB_PASSWORD'])
         cursor = connection.cursor()
         @bot.message_handler(func=lambda message: show_state(message.from_user.id) == INIT_STATE)
         def init(message):
