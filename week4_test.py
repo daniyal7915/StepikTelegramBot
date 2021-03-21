@@ -6,10 +6,11 @@ token = os.environ['TEL_TOKEN']
 bot = telebot.TeleBot(token)
 
 connection, cursor = '',''
-INIT_STATE, MAIN_STATE, CITY_STATE1, CITY_STATE2, MAP_STATE = 1, 2, 3, 4, 5
+INIT_STATE, MAIN_STATE, CITY_STATE1, CITY_STATE2, MAP_STATE, CHECK_STATE = 1, 2, 3, 4, 5, 6
 name = 'Введите название города на английском языке.'
-back = 'Возвращаюсь в начало программы (все данные будут стерты). Наберите /start для получения ' \
+back = 'Возвращаюсь в начало программы (все данные стерты). Наберите /start для получения ' \
        'инструкций.'
+d_check = 'Вы уверены? Все данные будут стерты! Да или Нет?'
 wrong = 'Неверно. Нажмите/Наберите Да или Нет'
 
 def create_file(message):
@@ -108,7 +109,7 @@ while attempt <= 3:
                                       port=os.environ['DB_PORT'])
         cursor = connection.cursor()
         @bot.message_handler(func=lambda message: show_state(message.from_user.id) == INIT_STATE)
-        def init(message):
+        def init_handler(message):
             del_stat(message.from_user.id)
             cr_stat(message.from_user.id)
             del_source(message.from_user.id)
@@ -129,8 +130,8 @@ while attempt <= 3:
         @bot.message_handler(func=lambda message: show_state(message.from_user.id) == MAIN_STATE)
         def main_handler(message):
             if message.text == '/start':
-                bot.send_message(message.chat.id, back)
-                save_state(message.from_user.id, INIT_STATE)
+                bot.send_message(message.chat.id, d_check)
+                save_state(message.from_user.id, CHECK_STATE)
             elif message.text.lower() == 'да':
                 bot.send_message(message.chat.id, name)
                 save_state(message.from_user.id, CITY_STATE1)
@@ -147,8 +148,8 @@ while attempt <= 3:
         @bot.message_handler(func=lambda message: show_state(message.from_user.id) == CITY_STATE1)
         def city_handler1(message):
             if message.text == '/start':
-                bot.send_message(message.chat.id, back)
-                save_state(message.from_user.id, INIT_STATE)
+                bot.send_message(message.chat.id, d_check)
+                save_state(message.from_user.id, CHECK_STATE)
             elif message.text == 'Стат.':
                 stat_ans = 'Количество верно введенных названий: %d\nКоличество не верно введенных ' \
                            'названий: %d\n\nВведите название города или нажмите/наберите /start для ' \
@@ -163,8 +164,8 @@ while attempt <= 3:
         @bot.message_handler(func=lambda message: show_state(message.from_user.id) == CITY_STATE2)
         def city_handler2(message):
             if message.text == '/start':
-                bot.send_message(message.chat.id, back)
-                save_state(message.from_user.id, INIT_STATE)
+                bot.send_message(message.chat.id, d_check)
+                save_state(message.from_user.id, CHECK_STATE)
             elif message.text == 'Стат.':
                 stat_ans = 'Количество верно введенных названий: %d\nКоличество не верно введенных ' \
                            'названий: %d\n\nНажите/Наберите "Да", "Нет" или /start для возвращения ' \
@@ -177,9 +178,7 @@ while attempt <= 3:
                     save_state(message.from_user.id, CITY_STATE1)
                 elif message.text.lower() == 'нет':
                     ans = "Показать карту с введенными городами? Да или Нет?\n\n" \
-                          "Внимание! Тестировано только для Windows.\n" \
-                          "Карта должна открыться в окне браузера на компьютере где запущен код бота,\n" \
-                          "если не открылась то свяжитесь c разработчиком."
+                          "Внимание! Открывайте карту в браузере, а не в НTML Viewer"
                     bot.send_message(message.chat.id, ans)
                     save_state(message.from_user.id, MAP_STATE)
                 else:
@@ -187,8 +186,8 @@ while attempt <= 3:
         @bot.message_handler(func=lambda message: show_state(message.from_user.id) == MAP_STATE)
         def map_handler2(message):
             if message.text == '/start':
-                bot.send_message(message.chat.id, back)
-                save_state(message.from_user.id, INIT_STATE)
+                bot.send_message(message.chat.id, d_check)
+                save_state(message.from_user.id, CHECK_STATE)
             elif message.text == 'Стат.':
                 stat_ans = 'Количество верно введенных названий: %d\nКоличество не верно введенных названий: ' \
                            '%d\n\nНажите/Наберите "Да", "Нет" или /start для возвращения в начало программы' \
@@ -197,8 +196,7 @@ while attempt <= 3:
                 bot.send_message(message.chat.id, stat_ans)
             else:
                 if message.text.lower() == 'да':
-                    ans1 = 'Карта должна открыться в окне браузера.\n ' \
-                           'Нажмите/Наберите "Да" для повторного ввода данных, "Стат." для вывода статистики, ' \
+                    ans1 = 'Нажмите/Наберите "Да" для повторного ввода данных, "Стат." для вывода статистики, ' \
                            '/start для возвращения в начало программы (все данные будут стерты).'
                     bot.send_message(message.chat.id, ans1)
                     save_state(message.from_user.id, MAIN_STATE)
@@ -210,6 +208,18 @@ while attempt <= 3:
                     save_state(message.from_user.id, MAIN_STATE)
                 else:
                     bot.reply_to(message, wrong)
+        @bot.message_handler(func=lambda message: show_state(message.from_user.id) == CHECK_STATE)
+        def check_handler(message):
+            if message.text.lower() == 'да':
+                bot.send_message(message.chat.id, back)
+                save_state(message.from_user.id, INIT_STATE)
+            elif message.text.lower() == 'нет':
+                ans = 'Нажмите/Наберите "Да" для повторного ввода данных, "Стат." для вывода статистики, ' \
+                      '/start для возвращения в начало программы (все данные будут стерты).'
+                bot.send_message(message.chat.id, ans)
+                save_state(message.from_user.id, MAIN_STATE)
+            else:
+                bot.reply_to(message, wrong)
         break
     except psycopg2.Error:
         if attempt <= 3:
