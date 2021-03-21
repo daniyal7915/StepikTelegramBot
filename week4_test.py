@@ -58,8 +58,8 @@ def api_process(t_message):
         temp = round(data['main']['temp'])
         save_state(t_message.from_user.id, CITY_STATE2)
         fill_source(t_message.from_user.id, city, lat, long, curr_date, temp)
-        return 'Координаты города %s:\nдолгота <i>%.4f</i>, широта <i>%.4f</i>\nТекущая дата: %s\n' \
-               'Tемпература: %d градус%s Цельсия\n' % (city, lat, long, curr_date, temp, end(temp))
+        return 'Координаты города %s:\nдолгота <i>%.4f</i>, широта <i>%.4f</i>\nТекущая дата: <i>%s</i>\n' \
+               'Tемпература: <i>%d</i> градус%s Цельсия\n' % (city, lat, long, curr_date, temp, end(temp))
 
 def save_state(user_id, state):
     cursor.execute(f'update user_state set user_state = {state} where user_id = {user_id}')
