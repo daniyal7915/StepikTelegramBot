@@ -58,7 +58,7 @@ def api_process(t_message):
         temp = round(data['main']['temp'])
         save_state(t_message.from_user.id, CITY_STATE2)
         fill_source(t_message.from_user.id, city, lat, long, curr_date, temp)
-        return 'Координаты города %s:\nдолгота %.4f, широта %.4f\nТекущая дата: %s\n' \
+        return 'Координаты города %s:\nдолгота <i>%.4f</i>, широта <i>%.4f</i>\nТекущая дата: %s\n' \
                'Tемпература: %d градус%s Цельсия\n' % (city, lat, long, curr_date, temp, end(temp))
 
 def save_state(user_id, state):
@@ -119,13 +119,13 @@ while attempt <= 3:
                 markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=4)
                 btns = ["Да", "Нет", "Стат.", "/start"]
                 markup.add(*btns)
-                intro = f'Здравствуйте, {message.from_user.first_name}.\n\n' \
+                intro = f'Здравствуйте, <b>{message.from_user.first_name}</b>.\n\n' \
                         f'Позвольте представиться, \n' \
-                        f'меня зовут TentativeBot1: Geography, я принимаю на ввод названия городов, ' \
+                        f'меня зовут <i>TentativeBot1: Geography</i>, я принимаю на ввод названия городов, ' \
                         f'вывожу их географические координаты, текущую дату и актуальную температуру в них, ' \
                         f'после этого могу показать где они расположены на карте.\n\n' \
                         f'Нажмите/Наберите "Да" для ввода города или "Стат." для вывода статистики'
-                bot.send_message(message.chat.id, intro, reply_markup=markup)
+                bot.send_message(message.chat.id, intro, parse_mode='HTML' ,reply_markup=markup)
                 save_state(message.from_user.id, MAIN_STATE)
         @bot.message_handler(func=lambda message: show_state(message.from_user.id) == MAIN_STATE)
         def main_handler(message):
@@ -158,7 +158,7 @@ while attempt <= 3:
                 bot.send_message(message.chat.id, stat_ans)
             else:
                 ans = api_process(message)
-                bot.reply_to(message, ans)
+                bot.reply_to(message, ans, parse_mode='HTML')
                 if show_state(message.from_user.id) == CITY_STATE2:
                     bot.send_message(message.chat.id, "Повторить? Да или Нет?")
         @bot.message_handler(func=lambda message: show_state(message.from_user.id) == CITY_STATE2)
