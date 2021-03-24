@@ -5,7 +5,7 @@ from datetime import date
 token = os.environ['TEL_TOKEN']
 bot = telebot.TeleBot(token)
 
-transit1 = os.environ['DB_URL'].split('/')
+transit1 = os.environ['DATABASE_URL'].split('/')
 transit2 = transit1[2].split('@')
 DB = transit1[-1]
 DB_USER, DB_PASSWORD = transit2[0].split(':')
