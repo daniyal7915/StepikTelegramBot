@@ -5,6 +5,12 @@ from datetime import date
 token = os.environ['TEL_TOKEN']
 bot = telebot.TeleBot(token)
 
+transit1 = os.environ['DB_URL'].split('/')
+transit2 = transit1[2].split('@')
+DB = transit1[-1]
+DB_USER, DB_PASSWORD = transit2[0].split(':')
+DB_HOST, DB_PORT = transit2[1].split(':')
+
 connection, cursor = '',''
 INIT_STATE, MAIN_STATE, CITY_STATE1, CITY_STATE2, MAP_STATE, CHECK_STATE = 1, 2, 3, 4, 5, 6
 name = 'Введите название города на английском языке.'
@@ -104,9 +110,7 @@ attempt = 0
 while attempt <= 3:
     attempt += 1
     try:
-        connection = psycopg2.connect(database=os.environ['DB'], user=os.environ['DB_USER'],
-                                      password=os.environ['DB_PASSWORD'], host=os.environ['DB_HOST'],
-                                      port=os.environ['DB_PORT'])
+        connection = psycopg2.connect(database=DB, user=DB_USER, password=DB_PASSWORD, host=DB_HOST, port=DB_PORT)
         cursor = connection.cursor()
         @bot.message_handler(func=lambda message: show_state(message.from_user.id) == INIT_STATE)
         def init_handler(message):
