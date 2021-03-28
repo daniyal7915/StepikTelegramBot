@@ -2,4 +2,5 @@ pyTelegramBotAPI
 requests
 requests-toolbelt
 psycopg2
+pyshp
 
